@@ -4,7 +4,7 @@
 
 An open-source, zero-dependency calculator that estimates the **APR uplift** and **bandwidth savings** validators can expect by switching from gossipsub to [mump2p](https://docs.getoptimum.xyz/docs/learn/overview/intro), based on Optimum's published research.
 
-🔗 **Live demo**: [your-app.vercel.app](https://your-app.vercel.app)
+🔗 **Live demo**: [The App](https://validator-impact-calculator.vercel.app)
 
 ---
 
@@ -31,39 +31,6 @@ All estimates derived from Optimum's published research:
 - ~90–95% bandwidth reduction vs gossipsub baseline
 - Head vote accuracy: 98.6% → up to 99.1%
 
----
-
-## Deploy to Vercel
-
-### Option 1 — Vercel CLI (fastest)
-
-```bash
-npm i -g vercel
-vercel
-```
-
-### Option 2 — Vercel dashboard
-
-1. Push this repo to GitHub
-2. Go to [vercel.com/new](https://vercel.com/new)
-3. Import your repo → click **Deploy**
-
-No build config needed — Vercel detects static HTML automatically.
-
----
-
-## Run locally
-
-No build step required. Just open the file:
-
-```bash
-# macOS
-open index.html
-
-# Or serve with any static server
-npx serve .
-# → http://localhost:3000
-```
 
 ---
 
