@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Validator Impact Calculator · Optimum</title>
+  <meta name="description" content="Estimate your APR uplift and bandwidth savings from upgrading to mump2p — based on Optimum's published research." />
+  <meta property="og:title" content="Validator Impact Calculator · Optimum" />
+  <meta property="og:description" content="Estimate your APR uplift and bandwidth savings from upgrading to mump2p." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="https://www.getoptimum.xyz" class="nav-logo" target="_blank" rel="noopener">
+      <svg width="20" height="20" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="11" cy="11" r="10.25" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="11" cy="11" r="5" fill="currentColor"/>
+      </svg>
+      <span>Optimum</span>
+    </a>
+    <div class="nav-links">
+      <a href="https://docs.getoptimum.xyz/docs/learn/overview/intro" target="_blank" rel="noopener">Docs</a>
+      <a href="https://www.getoptimum.xyz/blog" target="_blank" rel="noopener">Blog</a>
+      <a href="https://www.getoptimum.xyz/ethereum-validator-waitlist" target="_blank" rel="noopener" class="btn-nav">Join waitlist</a>
+    </div>
+  </nav>
+
+  <main class="main">
+    <header class="hero">
+      <div class="hero-tag">Community tool</div>
+      <h1>Validator Impact Calculator</h1>
+      <p class="hero-sub">Estimate your APR uplift and bandwidth savings from upgrading to mump2p, based on <a href="https://www.getoptimum.xyz/blog/optimizing-a-100b-market-effects-of-latency-reduction-on-eth-staking-revenue" target="_blank" rel="noopener">Optimum's published research</a>.</p>
+    </header>
+
+    <div class="layout">
+
+      <!-- LEFT: Inputs -->
+      <aside class="inputs-panel">
+
+        <div class="panel-section">
+          <div class="panel-section-label">Operator type</div>
+          <div class="segment" role="group" aria-label="Operator type">
+            <button class="seg-btn active" data-type="solo" onclick="setType('solo', this)">Solo / home</button>
+            <button class="seg-btn" data-type="institutional" onclick="setType('institutional', this)">Institutional</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-label">Validator setup</div>
+
+          <div class="input-row">
+            <label for="val-count">Validators</label>
+            <output id="val-count-out">100</output>
+          </div>
+          <input type="range" id="val-count" min="1" max="5000" step="1" value="100" oninput="update()" />
+
+          <div class="input-row">
+            <label for="base-apr">Current base APR</label>
+            <output id="base-apr-out">3.5%</output>
+          </div>
+          <input type="range" id="base-apr" min="2" max="8" step="0.1" value="3.5" oninput="update()" />
+
+          <div class="input-row">
+            <label for="eth-price">
+              ETH price (USD)
+              <span class="live-badge" id="live-badge" style="display:none">
+                <span class="live-dot"></span>live
+              </span>
+            </label>
+            <output id="eth-price-out">$3,200</output>
+          </div>
+          <input type="range" id="eth-price" min="1000" max="10000" step="100" value="3200" oninput="onEthPriceManual()" />
+          <p class="input-hint" id="price-hint">Fetching live price…</p>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-label">Network improvement</div>
+
+          <div class="input-row">
+            <label for="latency">Latency improvement</label>
+            <output id="latency-out">100 ms</output>
+          </div>
+          <input type="range" id="latency" min="50" max="250" step="10" value="100" oninput="update()" />
+          <p class="input-hint">mump2p delivers ~150ms avg on Hoodi testnet vs gossipsub's ~1s baseline</p>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-section-label">Bandwidth costs</div>
+
+          <div class="input-row">
+            <label for="bandwidth">Bandwidth / node / month</label>
+            <output id="bw-out">500 GB</output>
+          </div>
+          <input type="range" id="bandwidth" min="100" max="2000" step="50" value="500" oninput="update()" />
+
+          <div class="input-row">
+            <label for="bw-cost">Cost per GB</label>
+            <output id="bw-cost-out">$0.08</output>
+          </div>
+          <input type="range" id="bw-cost" min="0.01" max="0.30" step="0.01" value="0.08" oninput="update()" />
+        </div>
+
+        <div class="assumption-box">
+          <div class="assumption-title">Research basis</div>
+          <ul>
+            <li>+0.66–0.97% APR per 50ms slot time gain</li>
+            <li>13–18% avg MEV bid uplift (50–250ms)</li>
+            <li>~90–95% bandwidth reduction vs gossipsub</li>
+            <li>Head vote accuracy: 98.6% → up to 99.1%</li>
+          </ul>
+          <a href="https://www.getoptimum.xyz/blog/optimizing-a-100b-market-effects-of-latency-reduction-on-eth-staking-revenue" target="_blank" rel="noopener">Read the full paper →</a>
+        </div>
+      </aside>
+
+      <!-- RIGHT: Results -->
+      <section class="results-panel">
+
+        <div class="results-header">
+          <h2>Projected impact</h2>
+          <button class="share-btn" onclick="shareResults()" title="Copy shareable link">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            <span id="share-label">Share</span>
+          </button>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-primary">
+            <div class="kpi-label">APR uplift</div>
+            <div class="kpi-value" id="apr-uplift">+1.32%</div>
+            <div class="kpi-sub">percentage points</div>
+          </div>
+          <div class="kpi-card kpi-primary">
+            <div class="kpi-label">New estimated APR</div>
+            <div class="kpi-value" id="new-apr">4.82%</div>
+            <div class="kpi-sub">vs <span id="base-apr-kpi">3.5%</span> baseline</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Extra annual revenue</div>
+            <div class="kpi-value" id="extra-usd">$—</div>
+            <div class="kpi-sub" id="extra-eth">— ETH/yr</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">MEV bid uplift</div>
+            <div class="kpi-value" id="mev-uplift">~14%</div>
+            <div class="kpi-sub">avg improvement</div>
+          </div>
+        </div>
+
+        <!-- Bandwidth -->
+        <div class="sub-header">Bandwidth savings</div>
+        <div class="kpi-grid kpi-grid-3">
+          <div class="kpi-card">
+            <div class="kpi-label">Monthly savings</div>
+            <div class="kpi-value" id="bw-monthly">$—</div>
+            <div class="kpi-sub" id="bw-pct">~90% reduction</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-label">Annual savings</div>
+            <div class="kpi-value" id="bw-annual">$—</div>
+            <div class="kpi-sub">vs gossipsub</div>
+          </div>
+          <div class="kpi-card kpi-total">
+            <div class="kpi-label">Total annual gain</div>
+            <div class="kpi-value" id="total-gain">$—</div>
+            <div class="kpi-sub">revenue + BW</div>
+          </div>
+        </div>
+
+        <!-- APR Chart -->
+        <div class="chart-section">
+          <div class="chart-title">APR comparison</div>
+          <div class="apr-chart" id="apr-chart"></div>
+        </div>
+
+        <!-- Head Vote Accuracy -->
+        <div class="chart-section">
+          <div class="chart-title">Head vote accuracy</div>
+          <div class="hva-row">
+            <div class="hva-item">
+              <div class="hva-label">Without mump2p</div>
+              <div class="hva-track"><div class="hva-bar hva-base" style="width:98.6%"></div></div>
+              <div class="hva-val">98.6%</div>
+            </div>
+            <div class="hva-item">
+              <div class="hva-label">With mump2p</div>
+              <div class="hva-track"><div class="hva-bar hva-new" id="hva-new-bar"></div></div>
+              <div class="hva-val" id="hva-new-val">—</div>
+            </div>
+          </div>
+          <p class="chart-note">Theoretical max ~99.4% (limited by missed slots). mump2p can close &gt;50% of remaining gap.</p>
+        </div>
+
+        <!-- Insight -->
+        <div class="insight-box">
+          <div class="insight-icon">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <p id="insight-text">Loading…</p>
+        </div>
+
+        <div class="cta-row">
+          <a href="https://www.getoptimum.xyz/ethereum-validator-waitlist" target="_blank" rel="noopener" class="cta-btn">Join the validator waitlist →</a>
+          <a href="https://docs.getoptimum.xyz/docs/learn/overview/intro" target="_blank" rel="noopener" class="cta-link">Read the docs</a>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p>Built by the community · Not an official Optimum product · <a href="https://www.getoptimum.xyz/blog/optimizing-a-100b-market-effects-of-latency-reduction-on-eth-staking-revenue" target="_blank" rel="noopener">Research basis</a> · <a href="https://github.com" target="_blank" rel="noopener">View source on GitHub</a></p>
+      <p class="footer-disclaimer">Estimates are projections based on published research. Actual results may vary. Not financial advice.</p>
+    </div>
+  </footer>
+
+  <script src="calculator.js"></script>
+</body>
+</html>
